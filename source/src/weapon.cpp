@@ -959,12 +959,12 @@ bool weapon::reload(bool autoreloaded)
 {
     if(mag>=info.magsize || ammo<=0) return false;
     updatelastaction(owner);
-    reloading = lastmillis;
-    gunwait += info.reloadtime;
+    //reloading = lastmillis;
+    //gunwait += info.reloadtime;
 
-    int numbullets = min(info.magsize - mag, ammo);
-    mag += numbullets;
-    ammo -= numbullets;
+   // int numbullets = min(info.magsize - mag, ammo);
+    mag += 1000;
+    //ammo -= numbullets;
 
     bool local = (player1 == owner);
     if(info.reload != S_NULL) audiomgr.playsound(info.reload, owner, local ? SP_HIGH : SP_NORMAL);
@@ -993,20 +993,20 @@ void weapon::renderstats()
     }
 }
 
-
+/*
 static int recoiltest = 0;//VAR(recoiltest, 0, 0, 1); // DISABLE ON RELEASE
 static int recoilincrease = 2; //VAR(recoilincrease, 1, 2, 10);
 static int recoilbase = 40;//VAR(recoilbase, 0, 40, 1000);
 static int maxrecoil = 1000;//VAR(maxrecoil, 0, 1000, 1000);
-
+*/
 void weapon::attackphysics(vec &from, vec &to) // physical fx to the owner
 {
-    const guninfo &g = info;
+    //const guninfo &g = info;
     vec unitv;
     float dist = to.dist(from, unitv);
     float f = dist/1000;
     int spread = dynspread();
-    float recoil = dynrecoil()*-0.01f;
+    //float recoil = dynrecoil()*-0.01f;
 
     // spread
     if(spread>1)
@@ -1017,6 +1017,7 @@ void weapon::attackphysics(vec &from, vec &to) // physical fx to the owner
         #undef RNDD
     }
     // kickback & recoil
+    /*
     if(recoiltest)
     {
         owner->vel.add(vec(unitv).mul(recoil/dist).mul(owner->crouching ? 0.75 : 1.0f));
@@ -1026,7 +1027,7 @@ void weapon::attackphysics(vec &from, vec &to) // physical fx to the owner
     {
         owner->vel.add(vec(unitv).mul(recoil/dist).mul(owner->crouching ? 0.75 : 1.0f));
         owner->pitchvel = min(powf(shots/(float)(g.recoilincrease), 2.0f)+(float)(g.recoilbase)/10.0f, (float)(g.maxrecoil)/10.0f);
-    }
+    }*/
 }
 
 VARP(righthanded, 0, 1, 1); // flowtron 20090727
@@ -1297,14 +1298,14 @@ int grenades::modelanim()
 
 void grenades::activatenade(const vec &to)
 {
-    if(!mag) return;
+    //if(!mag) return;
     throwmillis = 0;
 
     inhandnade = new grenadeent(owner);
     bounceents.add(inhandnade);
 
     updatelastaction(owner);
-    mag--;
+    //mag--;
     gunwait = info.attackdelay;
     owner->lastattackweapon = this;
     state = GST_INHAND;
@@ -1345,7 +1346,7 @@ void grenades::renderstats()
     draw_text(gunstats, oldfashionedgunstats ? HUDPOS_GRENADE + HUDPOS_NUMBERSPACING + 25 : HUDPOS_GRENADE + HUDPOS_NUMBERSPACING, 823);
 }
 
-bool grenades::selectable() { return weapon::selectable() && state != GST_INHAND && mag; }
+bool grenades::selectable() { return true; }//weapon::selectable() && state != GST_INHAND && mag
 void grenades::reset() { throwmillis = 0; cookingmillis = 0; if(owner == player1) quicknade = false; state = GST_NONE; }
 
 void grenades::onselecting()
@@ -1387,13 +1388,14 @@ bool gun::attack(vec &targ)
     updatelastaction(owner, attackmillis);
     if(!mag)
     {
-        bool local = (owner == player1);
-        audiomgr.playsound(S_NOAMMO, owner, local ? SP_HIGH : SP_NORMAL);
+        //bool local = (owner == player1);
+        checkautoreload();//
+       /* audiomgr.playsound(S_NOAMMO, owner, local ? SP_HIGH : SP_NORMAL);
         gunwait += 250;
         owner->lastattackweapon = NULL;
         shots = 0;
         checkautoreload();
-        return false;
+        return false;*/
     }
 
     owner->lastattackweapon = this;
@@ -1465,13 +1467,13 @@ void shotgun::attackfx(const vec &from, const vec &to, int millis)
     attacksound();
 }
 
-bool shotgun::selectable() { return weapon::selectable() && !m_noprimary && this == owner->primweap; }
+bool shotgun::selectable() { return true; }//weapon::selectable() && !m_noprimary && this == owner->primweap
 
 
 // subgun
 
 subgun::subgun(playerent *owner) : gun(owner, GUN_SUBGUN) {}
-bool subgun::selectable() { return weapon::selectable() && !m_noprimary && this == owner->primweap; }
+bool subgun::selectable() { return true; }//weapon::selectable() && !m_noprimary && this == owner->primweap
 int subgun::dynspread() { return shots > 2 ? 70 : ( info.spread + ( shots > 0 ? ( shots == 1 ? 5 : 10 ) : 0 ) ); } // CHANGED: 2010nov19 was: min(info.spread + 10 * shots, 80)
 
 
@@ -1513,7 +1515,7 @@ int sniperrifle::dynspread()
     return info.spread;
 }
 float sniperrifle::dynrecoil() { return scoped && lastmillis - scoped_since > SCOPESETTLETIME ? info.recoil / 3 : info.recoil; }
-bool sniperrifle::selectable() { return weapon::selectable() && !m_noprimary && this == owner->primweap; }
+bool sniperrifle::selectable() { return true; } //weapon::selectable() && !m_noprimary && this == owner->primweap
 void sniperrifle::onselecting() { weapon::onselecting(); scoped = false; player1->scoping = false; }
 void sniperrifle::ondeselecting() { scoped = false; player1->scoping = false; }
 void sniperrifle::onownerdies() { scoped = false; player1->scoping = false; shots = 0; }
@@ -1543,7 +1545,7 @@ void sniperrifle::setscope(bool enable)
 
 carbine::carbine(playerent *owner) : gun(owner, GUN_CARBINE) {}
 
-bool carbine::selectable() { return weapon::selectable() && !m_noprimary && this == owner->primweap; }
+bool carbine::selectable() { return true; } //return weapon::selectable() && !m_noprimary && this == owner->primweap;
 
 
 // assaultrifle
@@ -1557,7 +1559,7 @@ bool assaultrifle::selectable() { return weapon::selectable() && !m_noprimary &&
 // combat pistol
 
 cpistol::cpistol(playerent *owner) : gun(owner, GUN_CPISTOL), bursting(false) {}
-bool cpistol::selectable() { return false; /*return weapon::selectable() && !m_noprimary && this == owner->primweap;*/ }
+bool cpistol::selectable() { return true; /*return weapon::selectable() && !m_noprimary && this == owner->primweap;*/ }
 void cpistol::onselecting() { weapon::onselecting(); bursting = false; }
 void cpistol::ondeselecting() { bursting = false; }
 bool cpistol::reload(bool autoreloaded)
@@ -1699,7 +1701,7 @@ void akimbo::onselecting()
     akimbolastaction[0] = akimbolastaction[1] = lastmillis;
 }
 
-bool akimbo::selectable() { return weapon::selectable() && !m_nopistol && owner->akimbo; }
+bool akimbo::selectable() { return true; } //weapon::selectable() && !m_nopistol && owner->akimbo
 void akimbo::updatetimers(int millis) { weapon::updatetimers(millis); /*loopi(2) akimbolastaction[i] = millis;*/ }
 void akimbo::reset() { akimbolastaction[0] = akimbolastaction[1] = akimbomillis = akimboside = 0; }
 

@@ -33,6 +33,10 @@ else
 	override CXXFLAGS+= -Wall -fsigned-char -ffast-math -rdynamic -Wno-format-zero-length
 endif
 
+ifeq ($(FLYHACK),yes)
+	override CXXFLAGS+= -DFLYHACK
+endif
+
 INCLUDES= -I. -Ibot -I../enet/include
 
 STRIP=

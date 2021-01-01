@@ -23,9 +23,9 @@ bool multiplayer(const char *op)
 
 bool allowedittoggle()
 {
-    bool allow = !curpeer || gamemode==1;
-    if(!allow) conoutf("editing in multiplayer requires coopedit mode (1)");
-    return allow;
+    //bool allow = !curpeer || gamemode==1;
+    //if(!allow) conoutf("editing in multiplayer requires coopedit mode (1)");
+    return true; //was allow
 }
 
 void throttle();
