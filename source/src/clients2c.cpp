@@ -183,11 +183,11 @@ void parsepositions(ucharbuf &p)
             d->o.z += d->eyeheight;
             d->yaw = yaw;
             d->pitch = pitch;
-            if(d->weaponsel->type == GUN_SNIPER)
-            {
-                sniperrifle *sr = (sniperrifle *)d->weaponsel;
-                sr->scoped = d->scoping = scoping;
-            }
+            //if(d->weaponsel->type == GUN_SNIPER)
+            //{
+            gun *gn = (gun *)d->weaponsel;
+            gn->scoped = d->scoping = scoping;
+            //}
             d->strafe = (f&3)==3 ? -1 : f&3;
             f >>= 2;
             d->move = (f&3)==3 ? -1 : f&3;

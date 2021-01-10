@@ -82,11 +82,22 @@ struct grenades : weapon
 struct gun : weapon
 {
     gun(playerent *owner, int type);
+
+    bool scoped;
+    int scoped_since;
+
     virtual bool attack(vec &targ);
     virtual void attackfx(const vec &from, const vec &to, int millis);
+    void renderaimhelp(bool teamwarning);
+    void renderhudmodel();
     int modelanim();
     void checkautoreload();
+    void onselecting();
+    void ondeselecting();
     void onownerdies();
+    void setscope(bool enable);
+    int dynspread();
+    float dynrecoil();
 };
 
 
@@ -100,22 +111,20 @@ struct subgun : gun
 
 struct sniperrifle : gun
 {
-    bool scoped;
-    int scoped_since;
+
 
     sniperrifle(playerent *owner);
     void attackfx(const vec &from, const vec &to, int millis);
     bool reload(bool autoreloaded);
 
-    int dynspread();
-    float dynrecoil();
+    //int dynspread();
+   // float dynrecoil();
     bool selectable();
-    void onselecting();
-    void ondeselecting();
-    void onownerdies();
-    void renderhudmodel();
-    void renderaimhelp(bool teamwarning);
-    void setscope(bool enable);
+    //void onselecting();
+    //void ondeselecting();
+   // void onownerdies();
+    //void renderhudmodel();
+//    void renderaimhelp(bool teamwarning);
 };
 
 

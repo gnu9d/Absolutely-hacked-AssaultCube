@@ -19,7 +19,6 @@ PLATFORM_PREFIX=native
 # As above, this file is optional only.
 -include Makefile_local
 
-
 ifeq ($(ACDEBUG),yes)
 	CXXFLAGS= -O0
 	override CXXFLAGS+= -g -D_DEBUG
@@ -33,8 +32,20 @@ else
 	override CXXFLAGS+= -Wall -fsigned-char -ffast-math -rdynamic -Wno-format-zero-length
 endif
 
+ifeq ($(ITEMMAGNETHACK),yes)
+	override CXXFLAGS+= -DITEMMAGNETHACK
+endif
+
 ifeq ($(FLYHACK),yes)
 	override CXXFLAGS+= -DFLYHACK
+endif
+
+ifeq ($(LIGHTHACK),yes)
+	override CXXFLAGS+= -DLIGHTHACK
+endif
+
+ifeq ($(GUNWAITHACK),yes)
+	override CXXFLAGS+= -DGUNWAITHACK
 endif
 
 INCLUDES= -I. -Ibot -I../enet/include
@@ -104,6 +115,7 @@ CLIENT_OBJS= \
 	worldocull.o \
 	worldrender.o \
 	zip.o \
+	hack.o \
 	bot/bot.o \
 	bot/botmanager.o \
 	bot/bot_ai.o \

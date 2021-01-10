@@ -724,15 +724,15 @@ void CBot::CheckScope()
 {
 #define MINSCOPEDIST 15
 #define MINSCOPETIME 1000
-    if(m_pMyEnt->weaponsel->type != GUN_SNIPER) return;
-    sniperrifle *sniper = (sniperrifle *)m_pMyEnt->weaponsel;
+    //if(m_pMyEnt->weaponsel->type != GUN_SNIPER) return;
+    gun *gn = (gun *)m_pMyEnt->weaponsel;
     if(m_pMyEnt->enemy && m_pMyEnt->o.dist(m_pMyEnt->enemy->o) > MINSCOPEDIST)
     {
-        sniper->setscope(true);
+        gn->setscope(true);
     }
-    else if(m_pMyEnt->scoping && lastmillis - sniper->scoped_since < MINSCOPETIME)
+    else if(m_pMyEnt->scoping && lastmillis - gn->scoped_since < MINSCOPETIME)
     {
-        sniper->setscope(false);
+        gn->setscope(false);
     }
 }
 

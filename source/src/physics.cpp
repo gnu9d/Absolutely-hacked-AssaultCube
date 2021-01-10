@@ -869,7 +869,7 @@ dir(backward, move,   -1, k_down,  k_up)
 dir(forward,  move,    1, k_up,    k_down)
 dir(left,     strafe,  1, k_left,  k_right)
 dir(right,    strafe, -1, k_right, k_left)
-
+extern bool was_attack;
 void attack(bool on)
 {
     if(intermission) return;
@@ -878,7 +878,7 @@ void attack(bool on)
     {
         if(!on) tryrespawn();
     }
-    else player1->attacking = on;
+    else was_attack = on;
 }
 
 void jumpn(bool on)
@@ -940,7 +940,7 @@ FVARP(mfilter, 0.0f, 0.0f, 6.0f);               // simple lowpass filtering (zer
 void mousemove(int idx, int idy)
 {
     if(intermission || (player1->isspectating() && player1->spectatemode==SM_FOLLOW1ST)) return;
-    bool zooming = player1->weaponsel->type == GUN_SNIPER && ((sniperrifle *)player1->weaponsel)->scoped;               // check if player uses scope
+    bool zooming = ((gun *)player1->weaponsel)->scoped;               // check if player uses scope
     float dx = idx, dy = idy;
     if(mfilter > 0.0001f)
     { // simple IIR-like filter (1st order lowpass)

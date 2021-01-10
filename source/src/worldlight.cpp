@@ -178,6 +178,22 @@ VARF(ambient, 0, 0, 0xFFFFFF, if(!noteditmode("ambient")) { hdr.ambient = ambien
 
 void calclight()
 {
+    #ifdef LIGHTHACK
+    if(editmode)
+    {
+        servsqr *servworld = createservworld(world, cubicsize);
+        calcmapdims(clmapdims, servworld, ssize);
+        delete[] servworld;
+    }
+    sqr *s = S(0,0);
+    loopirev(cubicsize)
+    {
+        s->r = 255;
+        s->g = 255;
+        s->b = 255;
+        s++;
+    }
+    #else
     if(editmode)
     {
         servsqr *servworld = createservworld(world, cubicsize);
@@ -199,7 +215,7 @@ void calclight()
         s->b = b;
         s++;
     }
-
+    #endif //LIGHTHACK
     seedMT(ents.length() + hdr.maprevision);   // static seed -> nothing random here
 
     loopv(ents)

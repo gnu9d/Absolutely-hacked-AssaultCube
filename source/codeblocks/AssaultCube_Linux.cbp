@@ -235,6 +235,12 @@
 		<Unit filename="../src/geom.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../src/hack.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../src/hack.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="../src/http.cpp">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -419,10 +425,16 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Extensions>
-			<code_completion />
-			<envvars />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project output_language="" />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 			<lib_finder disable_auto="1" />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

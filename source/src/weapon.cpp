@@ -3,7 +3,7 @@
 #include "cube.h"
 #include "bot/bot.h"
 #include "hudgun.h"
-
+#define SCOPESETTLETIME 180
 VARP(autoreload, 0, 1, 1);
 VARP(akimboautoswitch, 0, 1, 1);
 VARP(akimboendaction, 0, 3, 3); // 0: switch to knife, 1: stay with pistol (if has ammo), 2: switch to grenade (if possible), 3: switch to primary (if has ammo) - all fallback to previous one w/o ammo for target
@@ -119,14 +119,17 @@ void quicknadethrow(bool on)
     if(player1->state != CS_ALIVE) return;
     if(on)
     {
-        if(player1->weapons[GUN_GRENADE]->mag > 0)
-        {
-            if(player1->weaponsel->type != GUN_GRENADE) selectweapon(player1->weapons[GUN_GRENADE]);
+        //if(player1->weapons[GUN_GRENADE]->mag > 0)
+        //{
+            if(player1->weaponsel->type != GUN_GRENADE)
+            {
+                selectweapon(player1->weapons[GUN_GRENADE]);
+            }
             if(player1->weaponsel->type == GUN_GRENADE || player1->nextweaponsel->type == GUN_GRENADE)
             {
                 if(!player1->weapons[GUN_GRENADE]->busy()) attack(true);
             }
-        }
+        //}
     }
     else
     {
@@ -135,7 +138,6 @@ void quicknadethrow(bool on)
     }
 }
 COMMAND(quicknadethrow, "d");
-
 COMMANDF(currentprimary, "", () { intret(player1->primweap->type); });
 COMMANDF(prevweapon, "", () { intret(player1->prevweaponsel->type); });
 COMMANDF(curweapon, "", () { intret(player1->weaponsel->type); });
@@ -1305,7 +1307,7 @@ void grenades::activatenade(const vec &to)
     bounceents.add(inhandnade);
 
     updatelastaction(owner);
-    //mag--;
+    mag++;
     gunwait = info.attackdelay;
     owner->lastattackweapon = this;
     state = GST_INHAND;
@@ -1416,8 +1418,11 @@ bool gun::attack(vec &targ)
     hits.setsize(0);
     raydamage(from, to, owner);
     attackfx(from, to, 0);
-
+    #ifdef GUNWAITHACK// Не работает в мультиплеере
+    gunwait = 0;
+    #else
     gunwait = info.attackdelay;
+    #endif // GUNWAITHACK
     mag--;
 
     sendshoot(from, to, attackmillis);
@@ -1439,9 +1444,38 @@ void gun::attackfx(const vec &from, const vec &to, int millis)
 
 int gun::modelanim() { return modelattacking() ? ANIM_GUN_SHOOT|ANIM_LOOP : ANIM_GUN_IDLE; }
 void gun::checkautoreload() { if(autoreload && owner==player1 && !mag) reload(true); }
-void gun::onownerdies() { shots = 0; }
-
-
+void gun::onownerdies() { scoped = false; player1->scoping = false; shots = 0; }
+void gun::setscope(bool enable)
+{
+    if(this == owner->weaponsel && !reloading && owner->state == CS_ALIVE)
+    {
+        if(scoped == false && enable == true) scoped_since = lastmillis;
+        if(enable != scoped) owner->scoping = enable;
+        scoped = enable;
+    }
+}
+void gun::onselecting() { weapon::onselecting(); scoped = false; player1->scoping = false; }
+void gun::ondeselecting() { scoped = false; player1->scoping = false; }
+float gun::dynrecoil() { return scoped && lastmillis - scoped_since > SCOPESETTLETIME ? info.recoil / 3 : info.recoil; }
+void gun::renderhudmodel() { if(!scoped) weapon::renderhudmodel(); }
+void gun::renderaimhelp(bool teamwarning)
+{
+    if(scoped) drawscope();
+    if(!editmode && !scoped) drawcrosshair(owner, teamwarning ? CROSSHAIR_TEAMMATE : owner->weaponsel->type);
+    else drawcrosshair(owner, CROSSHAIR_EDIT);
+}
+int gun::dynspread()
+{
+    if(scoped)
+    {
+        int scopetime = lastmillis - scoped_since;
+        if(scopetime > SCOPESETTLETIME)
+            return 1;
+        else
+            return max((info.spread * (SCOPESETTLETIME - scopetime)) / SCOPESETTLETIME, 1);
+    }
+    return info.spread;
+}
 // shotgun
 
 shotgun::shotgun(playerent *owner) : gun(owner, GUN_SHOTGUN) {}
@@ -1479,7 +1513,7 @@ int subgun::dynspread() { return shots > 2 ? 70 : ( info.spread + ( shots > 0 ? 
 
 // sniperrifle
 
-sniperrifle::sniperrifle(playerent *owner) : gun(owner, GUN_SNIPER), scoped(false) {}
+sniperrifle::sniperrifle(playerent *owner) : gun(owner, GUN_SNIPER) {}
 
 void sniperrifle::attackfx(const vec &from, const vec &to, int millis)
 {
@@ -1501,7 +1535,7 @@ bool sniperrifle::reload(bool autoreloaded)
     return r;
 }
 
-#define SCOPESETTLETIME 180
+/*
 int sniperrifle::dynspread()
 {
     if(scoped)
@@ -1513,14 +1547,14 @@ int sniperrifle::dynspread()
             return max((info.spread * (SCOPESETTLETIME - scopetime)) / SCOPESETTLETIME, 1);
     }
     return info.spread;
-}
-float sniperrifle::dynrecoil() { return scoped && lastmillis - scoped_since > SCOPESETTLETIME ? info.recoil / 3 : info.recoil; }
+}*/
+//float sniperrifle::dynrecoil() { return scoped && lastmillis - scoped_since > SCOPESETTLETIME ? info.recoil / 3 : info.recoil; }
 bool sniperrifle::selectable() { return true; } //weapon::selectable() && !m_noprimary && this == owner->primweap
-void sniperrifle::onselecting() { weapon::onselecting(); scoped = false; player1->scoping = false; }
-void sniperrifle::ondeselecting() { scoped = false; player1->scoping = false; }
-void sniperrifle::onownerdies() { scoped = false; player1->scoping = false; shots = 0; }
-void sniperrifle::renderhudmodel() { if(!scoped) weapon::renderhudmodel(); }
-
+//void sniperrifle::onselecting() { weapon::onselecting(); scoped = false; player1->scoping = false; }
+//void sniperrifle::ondeselecting() { scoped = false; player1->scoping = false; }
+//void sniperrifle::onownerdies() { scoped = false; player1->scoping = false; shots = 0; }
+//void sniperrifle::renderhudmodel() { if(!scoped) weapon::renderhudmodel(); }
+/*
 void sniperrifle::renderaimhelp(bool teamwarning)
 {
     if(scoped) drawscope();
@@ -1530,7 +1564,8 @@ void sniperrifle::renderaimhelp(bool teamwarning)
     }
     else drawcrosshair(owner, CROSSHAIR_EDIT);
 }
-
+*/
+/*
 void sniperrifle::setscope(bool enable)
 {
     if(this == owner->weaponsel && !reloading && owner->state == CS_ALIVE)
@@ -1540,7 +1575,7 @@ void sniperrifle::setscope(bool enable)
         scoped = enable;
     }
 }
-
+*/
 // carbine
 
 carbine::carbine(playerent *owner) : gun(owner, GUN_CARBINE) {}
@@ -1766,13 +1801,12 @@ void knife::renderstats() { }
 
 void setscope(bool enable)
 {
-    if(player1->weaponsel->type != GUN_SNIPER) return;
-    sniperrifle *sr = (sniperrifle *)player1->weaponsel;
-    sr->setscope(enable);
+    //if(player1->weaponsel->type != GUN_SNIPER) return;
+    gun *gn = (gun *)player1->weaponsel;
+    gn->setscope(enable);
 }
 
-COMMANDF(setscope, "i", (int *on) { setscope(*on != 0); });
-
+COMMAND(setscope, "d");
 void shoot(playerent *p, vec &targ)
 {
     if(p->state!=CS_ALIVE) return;

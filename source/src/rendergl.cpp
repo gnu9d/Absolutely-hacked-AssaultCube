@@ -477,7 +477,7 @@ void fovchanged()
 
 float dynfov()
 {
-    if(player1->weaponsel->type == GUN_SNIPER && ((sniperrifle *)player1->weaponsel)->scoped) return (float)scopefov;
+    if(((gun *)player1->weaponsel)->scoped) return (float)scopefov;
     else if(player1->isspectating()) return (float)spectfov;
     else return (float)fov;
 }

@@ -1,4 +1,5 @@
 // main.cpp: initialisation & main loop
+bool was_attack = false;
 
 #include "cube.h"
 
@@ -837,7 +838,6 @@ void checkinput()
 
 VARF(gamespeed, 10, 100, 1000, if(multiplayer()) gamespeed = 100);
 VARF(paused, 0, 0, 1, if(multiplayer()) paused = 0);
-
 bool inmainloop = false;
 static int clockrealbase = 0, clockvirtbase = 0;
 static void clockreset() { clockrealbase = SDL_GetTicks(); clockvirtbase = totalmillis; }
@@ -997,6 +997,7 @@ void sanitychecks()
 
 #define DEFAULTPROFILEPATH "profile"
 
+#include "hack.h"
 int main(int argc, char **argv)
 {
     DEBUGCODE(sanitychecks());
@@ -1329,11 +1330,8 @@ int main(int argc, char **argv)
         totalmillis = millis;
 
         checkinput();
-
         if(lastmillis) updateworld(curtime, lastmillis);
-
         if(needsautoscreenshot) showscores(true);
-
         serverslice(0);
 
         if(elapsed) fps = (1000.0f/elapsed+fps*10)/11; // avoid DIV-by-0
@@ -1364,6 +1362,7 @@ int main(int argc, char **argv)
         if(millis>lastflush+60000) { fflush(stdout); lastflush = millis; }
 #endif
         pollautodownloadresponse();
+
     }
 
     quit();

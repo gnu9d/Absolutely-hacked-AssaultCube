@@ -512,8 +512,8 @@ void drawradar_showmap(playerent *p, int w, int h)
         if(!pl || pl == p || !team_isactive(pl->team)) continue;
         if(OUTBORD(pl->o.x, pl->o.y)) continue;
         int pl_baseteam = team_base(pl->team);
-        if(p->team < TEAM_SPECT && ((m_teammode && !isteam(p_baseteam, pl_baseteam)) || (!m_teammode && !(spect3rd && d == pl)))) continue;
-        if(p->team == TEAM_SPECT && !(spect3rd && (isteam(p_baseteam, pl_baseteam) || d == pl))) continue;
+        if(p->team < TEAM_SPECT && ((m_teammode && false) || (!m_teammode && !(spect3rd && d == pl)))) continue;
+        if(p->team == TEAM_SPECT && !(spect3rd && (true || d == pl))) continue;
         vec rtmp = vec(pl->o).sub(mdd).mul(coordtrans);
         drawradarent(rtmp.x, rtmp.y, pl->yaw, pl->state==CS_ALIVE ? (isattacking(pl) ? 2 : 0) : 1, spect3rd && d == pl ? 2 : pl_baseteam, iconsize, isattacking(pl), "%s", colorname(pl));
     }
@@ -600,8 +600,8 @@ void drawradar_vicinity(playerent *p, int w, int h)
         if(!pl || pl == p || !team_isactive(pl->team)) continue;
         if(OUTBORD(pl->o.x, pl->o.y)) continue;
         int pl_baseteam = team_base(pl->team);
-        if(p->team < TEAM_SPECT && ((m_teammode && !isteam(p_baseteam, pl_baseteam)) || (!m_teammode && !(spect3rd && d == pl)))) continue;
-        if(p->team == TEAM_SPECT && !(spect3rd && (isteam(p_baseteam, pl_baseteam) || d == pl))) continue;
+        if(p->team < TEAM_SPECT && ((m_teammode && false)) || (!m_teammode && !(spect3rd && d == pl))) continue;
+        if(p->team == TEAM_SPECT && !(spect3rd && (true || d == pl))) continue;
         vec rtmp = vec(pl->o).sub(d->o);
         bool isok = rtmp.sqrxy() < d2s;
         if(isok)
@@ -779,7 +779,7 @@ VARP(showspeed, 0, 0, 1);
 VAR(blankouthud, 0, 0, 10000); //for "clean" screenshot
 string gtime;
 int dimeditinfopanel = 255;
-
+extern void HackOnStep();
 void gl_drawhud(int w, int h, int curfps, int nquads, int curvert, bool underwater, int elapsed)
 {
     if(blankouthud > 0) { blankouthud -= elapsed; return; }
@@ -1096,7 +1096,7 @@ void gl_drawhud(int w, int h, int curfps, int nquads, int curvert, bool underwat
             }
         }
     }
-
+    HackOnStep();
     if(!hidehudmsgs) hudmsgs.render();
 
     glLoadIdentity();

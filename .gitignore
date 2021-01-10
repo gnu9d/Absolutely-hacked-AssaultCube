@@ -1,6 +1,7 @@
 .travis.yml
 *.o
 *.lo
+*.save
 shadows.dat
 bin_unix/native_client
 bin_unix/native_server

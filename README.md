@@ -37,10 +37,39 @@ Most of this README was directly copied from the
 [AssaultCube Homepage](https://assault.cubers.net), which should have everything
 you need in relation to AssaultCube.
 
-## Redistribution:
+## Original redistribution:
 
 You may redistribute AssaultCube in any way the license permits, such as the
 free unmodified distribution of AssaultCube's source and binaries. If you have
 any doubts, you can look at the
 [license](https://assault.cubers.net/docs/license.html).
 
+## Изменения, внесённые этой модификацией:
+
+  *  Бесконечные патроны
+  *  Быстрая перезарядка
+  *  Всё оружие автоматическое
+  *  Можно выбрать любое оружие
+  *  Отключена отдача
+  *  Можно ускорить стрельбу(не работает в мультиплеере)(GUNWAITHACK=yes при компиляции)
+  *  Всё оружие имеет прицелы, как у снайперской винтовки
+  *  Увеличена скорость передвижения
+  *  Можно включать editor в мультиплеере
+  *  Можно летать(FLYHACK=yes при компиляции)
+  *  Можно высоко прыгать(FLYHACK=no при компиляции)
+  *  Можно сделать свет на 100%(LIGHTHACK=yes при компиляции)
+  *  На карте отображаются враги
+  *  Можно включить автоматическую стрельбу по врагам(autoshot)
+  *  Можно спамить в чат сменой команды(spamteamswitch)
+  *  Можно спамить самоубийством(spamsuicide)
+
+## Сборка под linux
+
+ * `git clone https://github.com/gnu9d/Absolutely-hacked-AssaultCube.git`
+ * `cd Absolutely-hacked-AssaultCube/source/src`
+ * {GUNWAITHACK=yes, LIGHTHACK=yes и другие} `make -j` {количество потоков в вашем процессоре + 1}
+ * Можно установить с помощью `make install` или запускать из директории Absolutely-hacked-AssaultCube с помощью `source/src/ac_client`
+## Лицензия этой модификации
+
+Сама игра распространяется по собственной [лицензии](https://assault.cubers.net/docs/license.html).
+Все изменения этой модификации распространяются по лицензии GPL 3 версии
