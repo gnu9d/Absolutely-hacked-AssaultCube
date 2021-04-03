@@ -176,46 +176,46 @@ void fullbrightlight(int level)
 
 VARF(ambient, 0, 0, 0xFFFFFF, if(!noteditmode("ambient")) { hdr.ambient = ambient; calclight(); unsavededits++;});
 
+VARP(lighthack, 0, 1, 1);
+
 void calclight()
 {
-    #ifdef LIGHTHACK
+
     if(editmode)
     {
         servsqr *servworld = createservworld(world, cubicsize);
         calcmapdims(clmapdims, servworld, ssize);
         delete[] servworld;
     }
-    sqr *s = S(0,0);
-    loopirev(cubicsize)
+    if(lighthack)
     {
-        s->r = 255;
-        s->g = 255;
-        s->b = 255;
-        s++;
+        sqr *s = S(0,0);
+        loopirev(cubicsize)
+        {
+            s->r = 255;
+            s->g = 255;
+            s->b = 255;
+            s++;
+        }
     }
-    #else
-    if(editmode)
+    else
     {
-        servsqr *servworld = createservworld(world, cubicsize);
-        calcmapdims(clmapdims, servworld, ssize);
-        delete[] servworld;
+        uchar r = (hdr.ambient>>16) & 0xFF, g = (hdr.ambient>>8) & 0xFF, b = hdr.ambient & 0xFF;
+        if(!r && !g)
+        {
+            if(!b) b = 10;
+            r = g = b;
+        }
+        else if(!maxtmus) r = g = b = max(max(r, g), b); // the old (white) light code, here for the few people with old video cards that don't support overbright
+        sqr *s = S(0,0);
+        loopirev(cubicsize)
+        {
+            s->r = r;
+            s->g = g;
+            s->b = b;
+            s++;
+        }
     }
-    uchar r = (hdr.ambient>>16) & 0xFF, g = (hdr.ambient>>8) & 0xFF, b = hdr.ambient & 0xFF;
-    if(!r && !g)
-    {
-        if(!b) b = 10;
-        r = g = b;
-    }
-    else if(!maxtmus) r = g = b = max(max(r, g), b); // the old (white) light code, here for the few people with old video cards that don't support overbright
-    sqr *s = S(0,0);
-    loopirev(cubicsize)
-    {
-        s->r = r;
-        s->g = g;
-        s->b = b;
-        s++;
-    }
-    #endif //LIGHTHACK
     seedMT(ents.length() + hdr.maprevision);   // static seed -> nothing random here
 
     loopv(ents)

@@ -512,7 +512,6 @@ void drawradar_showmap(playerent *p, int w, int h)
         if(!pl || pl == p || !team_isactive(pl->team)) continue;
         if(OUTBORD(pl->o.x, pl->o.y)) continue;
         int pl_baseteam = team_base(pl->team);
-        if(p->team < TEAM_SPECT && ((m_teammode && false) || (!m_teammode && !(spect3rd && d == pl)))) continue;
         if(p->team == TEAM_SPECT && !(spect3rd && (true || d == pl))) continue;
         vec rtmp = vec(pl->o).sub(mdd).mul(coordtrans);
         drawradarent(rtmp.x, rtmp.y, pl->yaw, pl->state==CS_ALIVE ? (isattacking(pl) ? 2 : 0) : 1, spect3rd && d == pl ? 2 : pl_baseteam, iconsize, isattacking(pl), "%s", colorname(pl));
@@ -600,7 +599,6 @@ void drawradar_vicinity(playerent *p, int w, int h)
         if(!pl || pl == p || !team_isactive(pl->team)) continue;
         if(OUTBORD(pl->o.x, pl->o.y)) continue;
         int pl_baseteam = team_base(pl->team);
-        if(p->team < TEAM_SPECT && ((m_teammode && false)) || (!m_teammode && !(spect3rd && d == pl))) continue;
         if(p->team == TEAM_SPECT && !(spect3rd && (true || d == pl))) continue;
         vec rtmp = vec(pl->o).sub(d->o);
         bool isok = rtmp.sqrxy() < d2s;

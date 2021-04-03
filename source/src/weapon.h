@@ -117,14 +117,7 @@ struct sniperrifle : gun
     void attackfx(const vec &from, const vec &to, int millis);
     bool reload(bool autoreloaded);
 
-    //int dynspread();
-   // float dynrecoil();
     bool selectable();
-    //void onselecting();
-    //void ondeselecting();
-   // void onownerdies();
-    //void renderhudmodel();
-//    void renderaimhelp(bool teamwarning);
 };
 
 
@@ -183,7 +176,6 @@ struct akimbo : gun
     void onammopicked();
     void onselecting();
     bool selectable();
-    void updatetimers(int millis);
     void reset();
     void renderhudmodel();
     bool timerout();

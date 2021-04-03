@@ -1,5 +1,6 @@
 #include "cube.h"
-bool worldpos2screenpos(vec worldpos, vec *screenpos);
-void DrawEnemyBox(playerent *pl);
+void spam();
 void parsePlayers();
+void makeautoaim();
+void pickupentities();
 void HackOnStep();

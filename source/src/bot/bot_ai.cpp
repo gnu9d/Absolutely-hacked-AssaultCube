@@ -724,7 +724,7 @@ void CBot::CheckScope()
 {
 #define MINSCOPEDIST 15
 #define MINSCOPETIME 1000
-    //if(m_pMyEnt->weaponsel->type != GUN_SNIPER) return;
+    if(m_pMyEnt->weaponsel->type == GUN_GRENADE) return;
     gun *gn = (gun *)m_pMyEnt->weaponsel;
     if(m_pMyEnt->enemy && m_pMyEnt->o.dist(m_pMyEnt->enemy->o) > MINSCOPEDIST)
     {

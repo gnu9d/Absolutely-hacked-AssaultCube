@@ -397,6 +397,13 @@ void resizephysent(physent *pl, int moveres, int curtime, float min, float max)
 
 FVARP(flyspeed, 1.0, 2.0, 5.0);
 
+VARP(flyAndNoclip, 0, 0, 1);
+FVARP(speedHack, 0.05, 0.3, 100.0);
+
+FVARP(defaultdropf, -500.0, 10.0, 500.0);
+FVARP(crouchdropf, -500.0, 100.0, 500.0);
+FVARP(gravity, -500.0, 20.0, 500.0);
+
 void moveplayer(physent *pl, int moveres, bool local, int curtime)
 {
     bool water = false;
@@ -445,10 +452,7 @@ void moveplayer(physent *pl, int moveres, bool local, int curtime)
         int move = pl->onladder && !pl->onfloor && pl->move == -1 ? 0 : pl->move; // movement on ladder
         if(!editfly) water = waterlevel > pl->o.z - 0.5f;
 
-        //float chspeed = (pl->onfloor || pl->onladder || !pl->crouchedinair) ? 0.4f : 1.0f;
-
-        //const bool crouching = pl->crouching || (pl->eyeheight < pl->maxeyeheight && pl->eyeheight > 1.1f);
-        const float speed = 0.3f;//curtime/(water ? 2000.0f : 1000.0f)*pl->maxspeed*(crouching && pl->state != CS_EDITING ? chspeed : 1.0f)*(pl==player1 && isfly ? flyspeed : 1.0f)
+        const float speed = speedHack;
         const float friction = water ? 20.0f : (pl->onfloor || isfly ? 6.0f : (pl->onladder ? 1.5f : 30.0f));
         const float fpsfric = max(friction/curtime*20.0f, 1.0f);
 
@@ -556,30 +560,32 @@ void moveplayer(physent *pl, int moveres, bool local, int curtime)
                 }
             }
 
-            const float gravity = 20.0f;
-            float dropf = 10.0f;         // (gravity-1)+pl->timeinair/15.0f
+            float dropf = defaultdropf;
             if(water) { dropf = 5; pl->timeinair = 0; }            // float slowly down in water
             if(pl->onladder) { dropf = 0; pl->timeinair = 0; }
-            #ifdef FLYHACK
-            pl->o.add(d);
-            if(pl->jumpnext && !pl->trycrouch)
+            if(flyAndNoclip)
             {
-                pl->vel.z = 0.6f; // fly directly upwards while holding jump keybinds
+                pl->o.add(d);
+                if(pl->jumpnext && !pl->trycrouch)
+                {
+                    pl->vel.z = 0.6f; // fly directly upwards while holding jump keybinds
+                }
+                else if (pl->trycrouch && !pl->jumpnext)
+                {
+                    pl->vel.z = -0.6f; // fly directly down while holding crouch keybinds
+                }
+                dropf = 0;
             }
-            else if (pl->trycrouch && !pl->jumpnext)
-            {
-                pl->vel.z = -0.6f; // fly directly down while holding crouch keybinds
+            else{
+                if(pl->jumpnext && !pl->trycrouch)
+                {
+                    dropf = -100.0f;
+                }
+                else if (pl->trycrouch && !pl->jumpnext)
+                {
+                    dropf = crouchdropf;
+                }
             }
-            #else
-            if(pl->jumpnext && !pl->trycrouch)
-            {
-                dropf = 1.0f;
-            }
-            else if (pl->trycrouch && !pl->jumpnext)
-            {
-                dropf = 100.0f;
-            }
-            #endif // FLYHACK
             drop = dropf*curtime/gravity/100/moveres;              // at high fps, gravity kicks in too fast
             rise = speed/moveres/1.2f;                             // extra smoothness when lifting up stairs
             if(pl->maxspeed-16.0f>0.5f) pl += 0xF0F0;
