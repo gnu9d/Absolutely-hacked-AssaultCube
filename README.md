@@ -44,6 +44,32 @@ free unmodified distribution of AssaultCube's source and binaries. If you have
 any doubts, you can look at the
 [license](https://assault.cubers.net/docs/license.html).
 
+## Changes made by this modification:
+
+  *  Infinite ammo
+  *  Quick recharge
+  *  All weapons are automatic
+  *  You can select any weapon
+  *  Recoil is disabled
+  *  You can disable gunwait(not working in multiplayer)(`/gunwaithack 1`)
+  *  All weapons have scopes like a sniper rifle
+  *  You can change the speed of movement(`/speedHack`)
+  *  You can turn on the editor in multiplayer
+  *  You can fly(`/flyAndNoclip 1`)
+  *  You can change the gravity(`/gravity`)
+  *  You can make the light at 100%(/lighthack 1)
+  *  Enemies are displayed on the map
+  *  You can enable automatic shooting at enemies(`/autoaim 1` + `/autoshot 1`)
+  *  You can spam in the chat by switching the team(`/spamteamswitch 1`)
+  *  You can spam suicide(`/spamsuicide 1`)
+
+## License of this modification
+
+The game itself is distributed under its own [license](https://assault.cubers.net/docs/license.html).
+All changes of this modification are distributed under the GPLv3 license
+
+# RU:
+
 ## Изменения, внесённые этой модификацией:
 
   *  Бесконечные патроны
@@ -51,25 +77,19 @@ any doubts, you can look at the
   *  Всё оружие автоматическое
   *  Можно выбрать любое оружие
   *  Отключена отдача
-  *  Можно ускорить стрельбу(не работает в мультиплеере)(GUNWAITHACK=yes при компиляции)
+  *  Можно ускорить стрельбу(не работает в мультиплеере)(`/gunwaithack 1`)
   *  Всё оружие имеет прицелы, как у снайперской винтовки
-  *  Увеличена скорость передвижения
+  *  Можно менять скорость передвижения(`/speedHack`)
   *  Можно включать editor в мультиплеере
-  *  Можно летать(FLYHACK=yes при компиляции)
-  *  Можно высоко прыгать(FLYHACK=no при компиляции)
-  *  Можно сделать свет на 100%(LIGHTHACK=yes при компиляции)
+  *  Можно летать(`/flyAndNoclip 1`)
+  *  Можно менять гравитацию(`/gravity`)
+  *  Можно сделать свет на 100%(/lighthack 1)
   *  На карте отображаются враги
-  *  Можно включить автоматическую стрельбу по врагам(autoshot)
-  *  Можно спамить в чат сменой команды(spamteamswitch)
-  *  Можно спамить самоубийством(spamsuicide)
+  *  Можно включить автоматическую стрельбу по врагам(`/autoaim 1` + `/autoshot 1`)
+  *  Можно спамить в чат сменой команды(`/spamteamswitch 1`)
+  *  Можно спамить самоубийством(`/spamsuicide 1`)
 
-## Сборка под linux
-
- * `git clone https://github.com/gnu9d/Absolutely-hacked-AssaultCube.git`
- * `cd Absolutely-hacked-AssaultCube/source/src`
- * {GUNWAITHACK=yes, LIGHTHACK=yes и другие} `make -j` {количество потоков в вашем процессоре + 1}
- * Можно установить с помощью `make install` или запускать из директории Absolutely-hacked-AssaultCube с помощью `source/src/ac_client`
 ## Лицензия этой модификации
 
 Сама игра распространяется по собственной [лицензии](https://assault.cubers.net/docs/license.html).
-Все изменения этой модификации распространяются по лицензии GPL 3 версии
+Все изменения этой модификации распространяются по лицензии GPLv3
